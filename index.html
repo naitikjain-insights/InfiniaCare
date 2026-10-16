@@ -9,12 +9,11 @@
   <meta name="description" content="Your healthcare and wellness journey starts with InfiniaCare.">
 
   <link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
   <main class="login-page">
-
     <header class="topbar">
       <a href="index.html" class="brand">
         <span class="brand-icon">∞<span>♥</span></span>
@@ -22,13 +21,12 @@
       </a>
 
       <p class="topbar-text">
-        New here?
-        <a href="#signup">Create account</a>
+        <span id="top-prompt">New here?</span>
+        <a href="#signup" id="top-mode-link">Create account</a>
       </p>
     </header>
 
     <section class="login-layout">
-
       <div class="welcome-panel">
         <div class="eyebrow">
           <span class="status-dot"></span>
@@ -57,11 +55,11 @@
         </p>
       </div>
 
-      <div class="form-panel">
+      <div class="form-panel" id="auth-card">
         <div class="form-heading">
-          <p class="form-kicker">WELCOME BACK</p>
-          <h2>Sign in to InfiniaCare</h2>
-          <p>Enter your details to continue.</p>
+          <p class="form-kicker" id="form-kicker">WELCOME BACK</p>
+          <h2 id="form-title">Sign in to InfiniaCare</h2>
+          <p id="form-subtitle">Enter your details to continue.</p>
         </div>
 
         <div id="form-message" class="form-message"
@@ -77,10 +75,8 @@
 
           <div class="form-group">
             <div class="label-row">
-              <label for="password">Password</label>
-              <a href="#forgot-password" id="forgot-link">
-                Forgot password?
-              </a>
+              <label for="password" id="password-label">Password</label>
+              <a href="#forgot-password" id="forgot-link">Forgot password?</a>
             </div>
 
             <div class="password-field">
@@ -94,18 +90,31 @@
             </div>
           </div>
 
-          <label class="remember-option">
+          <div class="form-group" id="confirm-group" hidden>
+            <label for="confirm-password" id="confirm-label">Confirm password</label>
+            <div class="password-field">
+              <input type="password" id="confirm-password"
+                name="confirm-password" placeholder="Re-enter your password"
+                autocomplete="new-password" disabled>
+              <button type="button" id="toggle-confirm"
+                class="password-toggle" aria-pressed="false">
+                Show
+              </button>
+            </div>
+          </div>
+
+          <label class="remember-option" id="remember-option">
             <input type="checkbox" id="remember-me">
             <span>Remember me</span>
           </label>
 
-          <button type="submit" class="login-button">
-            <span>Sign in</span>
-            <span>→</span>
+          <button type="submit" class="login-button" id="submit-button">
+            <span id="submit-label">Sign in</span>
+            <span aria-hidden="true">→</span>
           </button>
         </form>
 
-        <div class="separator">
+        <div class="separator" id="separator">
           <span></span>
           <p>OR CONTINUE WITH</p>
           <span></span>
@@ -116,25 +125,23 @@
           Continue with Google
         </button>
 
-        <p class="signup-text" id="signup">
-          Don't have an account?
-          <a href="#signup">Sign up</a>
+        <p class="signup-text">
+          <span id="bottom-prompt">Don't have an account?</span>
+          <a href="#signup" id="mode-link">Sign up</a>
         </p>
 
-        <p class="form-footer">
+        <p class="form-footer" id="form-footer">
           By continuing, you agree to our
           <a href="#terms">Terms</a> and
           <a href="#privacy">Privacy Policy</a>.
         </p>
       </div>
-
     </section>
 
     <footer class="page-footer">
       <span>© 2026 InfiniaCare</span>
       <span>Made for your wellbeing ♥</span>
     </footer>
-
   </main>
 </body>
 </html>
