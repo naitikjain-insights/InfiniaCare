@@ -5,11 +5,265 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080d1c">
-
-  <title>Login | InfiniaCare</title>
-  <meta name="description" content="Your healthcare and wellness journey starts with InfiniaCare.">
+  <meta name="description" content="InfiniaCare connects patients and healthcare professionals in one secure wellness platform.">
+  <title>Welcome | InfiniaCare</title>
 
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    [hidden] { display: none !important; }
+
+    .portal-page {
+      width: 100%;
+      max-width: 1060px;
+      margin: auto;
+      padding: 48px 0 60px;
+    }
+
+    .portal-heading {
+      max-width: 650px;
+      margin: 0 auto 36px;
+      text-align: center;
+    }
+
+    .portal-heading .eyebrow { margin-bottom: 23px; }
+
+    .portal-heading h1 {
+      font-family: "Manrope", sans-serif;
+      font-size: clamp(32px, 5vw, 51px);
+      line-height: 1.15;
+      letter-spacing: -1.8px;
+    }
+
+    .portal-heading h1 span {
+      display: block;
+      color: transparent;
+      background: linear-gradient(100deg, #48e0e8, #a99aff);
+      background-clip: text;
+      -webkit-background-clip: text;
+    }
+
+    .portal-heading > p {
+      max-width: 490px;
+      margin: 16px auto 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .portal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      max-width: 790px;
+      margin: 0 auto;
+    }
+
+    .portal-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-height: 285px;
+      padding: 30px;
+      overflow: hidden;
+      text-align: left;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 23px;
+      background: rgba(17, 25, 48, .78);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      cursor: pointer;
+      transition: transform .22s ease, border-color .22s ease,
+                  box-shadow .22s ease;
+    }
+
+    .portal-card::before {
+      position: absolute;
+      top: -75px;
+      right: -70px;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      content: "";
+      pointer-events: none;
+      filter: blur(2px);
+      opacity: .14;
+    }
+
+    .portal-card.patient::before {
+      background: #48e0e8;
+    }
+
+    .portal-card.doctor::before {
+      background: #9b83ff;
+    }
+
+    .portal-card:hover,
+    .portal-card:focus-visible {
+      transform: translateY(-5px);
+      outline: none;
+    }
+
+    .portal-card.patient:hover,
+    .portal-card.patient:focus-visible {
+      border-color: rgba(72, 224, 232, .65);
+      box-shadow: 0 18px 50px rgba(34, 203, 218, .09);
+    }
+
+    .portal-card.doctor:hover,
+    .portal-card.doctor:focus-visible {
+      border-color: rgba(155, 131, 255, .7);
+      box-shadow: 0 18px 50px rgba(125, 94, 242, .12);
+    }
+
+    .portal-icon {
+      display: grid;
+      place-items: center;
+      width: 62px;
+      height: 62px;
+      margin-bottom: 25px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      font-size: 29px;
+    }
+
+    .patient .portal-icon {
+      color: var(--cyan);
+      background: rgba(72, 224, 232, .09);
+      border-color: rgba(72, 224, 232, .22);
+    }
+
+    .doctor .portal-icon {
+      color: #b5a4ff;
+      background: rgba(155, 131, 255, .12);
+      border-color: rgba(155, 131, 255, .25);
+    }
+
+    .portal-card h2 {
+      font-family: "Manrope", sans-serif;
+      font-size: 23px;
+      letter-spacing: -.5px;
+    }
+
+    .portal-card p {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .portal-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: auto;
+      padding-top: 24px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .patient .portal-action { color: var(--cyan); }
+    .doctor .portal-action { color: #b5a4ff; }
+    .portal-action span:last-child { font-size: 21px; }
+
+    .portal-note {
+      margin: 28px auto 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .auth-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(350px, 450px);
+      align-items: center;
+      gap: clamp(28px, 6vw, 75px);
+      max-width: 1000px;
+      margin: auto;
+      padding: 35px 0 50px;
+    }
+
+    .auth-intro h1 {
+      margin-top: 22px;
+      font-family: "Manrope", sans-serif;
+      font-size: clamp(32px, 4vw, 48px);
+      line-height: 1.15;
+      letter-spacing: -1.7px;
+    }
+
+    .auth-intro h1 span {
+      display: block;
+      color: transparent;
+      background: linear-gradient(100deg, var(--cyan), #a99aff);
+      background-clip: text;
+      -webkit-background-clip: text;
+    }
+
+    .auth-intro > p {
+      margin-top: 16px;
+      max-width: 410px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.9;
+    }
+
+    .back-to-portals {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 25px;
+      padding: 8px 0;
+      border: 0;
+      background: transparent;
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .selected-portal {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 22px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      background: rgba(255,255,255,.035);
+      color: var(--cyan);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .selected-portal.doctor-badge { color: #b5a4ff; }
+
+    .portal-page .page-footer,
+    .auth-layout ~ .page-footer { margin-top: 30px; }
+
+    @media (max-width: 760px) {
+      .portal-page { padding: 42px 0 45px; }
+      .portal-grid { max-width: 460px; grid-template-columns: 1fr; gap: 15px; }
+      .portal-card { min-height: 225px; padding: 24px; }
+      .portal-icon { width: 52px; height: 52px; margin-bottom: 18px; }
+      .portal-card h2 { font-size: 21px; }
+      .auth-layout { grid-template-columns: 1fr; gap: 25px; padding: 35px 0; }
+      .auth-intro { text-align: center; }
+      .auth-intro > p { margin-left: auto; margin-right: auto; }
+      .auth-intro .eyebrow { margin: auto; }
+      #auth-card { width: 100%; max-width: 460px; margin: auto; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .portal-card { transition: none; }
+      .portal-card:hover { transform: none; }
+    }
+  </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js" defer></script>
@@ -24,44 +278,83 @@
         <span class="brand-name">Infinia<span>Care</span></span>
       </a>
 
-      <p class="topbar-text">
+      <p class="topbar-text" id="top-prompt-wrap" hidden>
         <span id="top-prompt">New here?</span>
         <a href="#signup" id="top-mode-link">Create account</a>
       </p>
     </header>
 
-    <section class="login-layout">
-
-      <div class="welcome-panel">
+    <!-- First screen: choose a portal -->
+    <section class="portal-page" id="portal-selection">
+      <div class="portal-heading">
         <div class="eyebrow">
           <span class="status-dot"></span>
           YOUR WELLNESS, CONNECTED
         </div>
 
-        <h1>
-          Your health journey,
+        <h1>Welcome to your care space
+          <span>Care that connects us.</span>
+        </h1>
+
+        <p>
+          Choose your portal to continue. We'll take you to the
+          sign-in options designed for your healthcare journey.
+        </p>
+      </div>
+
+      <div class="portal-grid">
+        <button type="button" class="portal-card patient" data-portal="patient">
+          <span class="portal-icon" aria-hidden="true">♡</span>
+          <h2>I'm a Patient</h2>
+          <p>Book appointments, access your health records and keep your wellness journey on track.</p>
+          <span class="portal-action">
+            <span>Continue as Patient</span>
+            <span aria-hidden="true">→</span>
+          </span>
+        </button>
+
+        <button type="button" class="portal-card doctor" data-portal="doctor">
+          <span class="portal-icon" aria-hidden="true">✚</span>
+          <h2>I'm a Doctor</h2>
+          <p>Manage your schedule, appointments and patient care from your professional workspace.</p>
+          <span class="portal-action">
+            <span>Continue as Doctor</span>
+            <span aria-hidden="true">→</span>
+          </span>
+        </button>
+      </div>
+
+      <p class="portal-note">
+        Secure access for patients and healthcare professionals.
+      </p>
+    </section>
+
+    <!-- Second screen: existing authentication form -->
+    <section class="auth-layout" id="auth-screen" hidden>
+      <div class="auth-intro">
+        <div class="eyebrow">
+          <span class="status-dot"></span>
+          <span id="intro-eyebrow">PATIENT PORTAL</span>
+        </div>
+
+        <h1 id="intro-title">Your health journey,
           <span>all in one place.</span>
         </h1>
 
-        <p class="welcome-description">
-          Welcome to a healthier you. Sign in to access your
-          personalized healthcare and wellness experience.
-        </p>
-
-        <div class="wellness-visual" aria-hidden="true">
-          <div class="orbit orbit-one"></div>
-          <div class="orbit orbit-two"></div>
-          <div class="visual-glow"></div>
-          <div class="visual-symbol">∞<span>♥</span></div>
-          <div class="visual-caption">CARE WITHOUT LIMITS</div>
-        </div>
-
-        <p class="privacy-note">
-          <span>✦</span> Your wellbeing matters.
+        <p id="intro-description">
+          Sign in to manage appointments, health records and your wellness.
         </p>
       </div>
 
       <div class="form-panel" id="auth-card">
+        <button type="button" id="back-to-portals" class="back-to-portals">
+          ← Change portal
+        </button>
+
+        <div class="selected-portal" id="selected-portal">
+          <span aria-hidden="true">♡</span>
+          <span id="selected-portal-label">PATIENT ACCESS</span>
+        </div>
 
         <div class="form-heading">
           <p class="form-kicker" id="form-kicker">WELCOME BACK</p>
@@ -69,118 +362,39 @@
           <p id="form-subtitle">Enter your details to continue.</p>
         </div>
 
-        <div
-          id="form-message"
-          class="form-message"
-          role="status"
-          aria-live="polite"
-          hidden
-        ></div>
+        <div id="form-message" class="form-message"
+          role="status" aria-live="polite" hidden></div>
 
         <form id="login-form">
-
-          <!-- Account type selection -->
-          <fieldset class="account-type-group" id="account-type-group">
-            <legend>Choose your account type</legend>
-
-            <div class="account-type-options">
-
-              <label class="account-type-option">
-                <input
-                  type="radio"
-                  name="account-type"
-                  value="patient"
-                  checked
-                >
-
-                <span class="account-type-icon" aria-hidden="true">♡</span>
-                <span class="account-type-name">Patient</span>
-                <span class="account-type-description">
-                  My health & appointments
-                </span>
-              </label>
-
-              <label class="account-type-option">
-                <input
-                  type="radio"
-                  name="account-type"
-                  value="doctor"
-                >
-
-                <span class="account-type-icon" aria-hidden="true">✚</span>
-                <span class="account-type-name">Doctor</span>
-                <span class="account-type-description">
-                  My patients & schedule
-                </span>
-              </label>
-
-            </div>
-          </fieldset>
-
           <div class="form-group">
             <label for="email">Email address</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="you@example.com"
-              autocomplete="email"
-              required
-            >
+            <input type="email" id="email" name="email"
+              placeholder="you@example.com" autocomplete="email" required>
           </div>
 
           <div class="form-group">
             <div class="label-row">
               <label for="password" id="password-label">Password</label>
-              <a href="#forgot-password" id="forgot-link">
-                Forgot password?
-              </a>
+              <a href="#forgot-password" id="forgot-link">Forgot password?</a>
             </div>
 
             <div class="password-field">
-              <input
-                type="password"
-                id="password"
-                name="password"
+              <input type="password" id="password" name="password"
                 placeholder="Enter your password"
-                autocomplete="current-password"
-                required
-              >
-
-              <button
-                type="button"
-                id="toggle-password"
-                class="password-toggle"
-                aria-pressed="false"
-              >
-                Show
-              </button>
+                autocomplete="current-password" required>
+              <button type="button" id="toggle-password"
+                class="password-toggle" aria-pressed="false">Show</button>
             </div>
           </div>
 
           <div class="form-group" id="confirm-group" hidden>
-            <label for="confirm-password" id="confirm-label">
-              Confirm password
-            </label>
-
+            <label for="confirm-password" id="confirm-label">Confirm password</label>
             <div class="password-field">
-              <input
-                type="password"
-                id="confirm-password"
-                name="confirm-password"
-                placeholder="Re-enter your password"
-                autocomplete="new-password"
-                disabled
-              >
-
-              <button
-                type="button"
-                id="toggle-confirm"
-                class="password-toggle"
-                aria-pressed="false"
-              >
-                Show
-              </button>
+              <input type="password" id="confirm-password"
+                name="confirm-password" placeholder="Re-enter your password"
+                autocomplete="new-password" disabled>
+              <button type="button" id="toggle-confirm"
+                class="password-toggle" aria-pressed="false">Show</button>
             </div>
           </div>
 
@@ -193,7 +407,6 @@
             <span id="submit-label">Sign in</span>
             <span aria-hidden="true">→</span>
           </button>
-
         </form>
 
         <div class="separator" id="separator">
@@ -217,7 +430,6 @@
           <a href="#terms">Terms</a> and
           <a href="#privacy">Privacy Policy</a>.
         </p>
-
       </div>
     </section>
 
@@ -227,5 +439,67 @@
     </footer>
 
   </main>
+
+  <!-- Portal selection UI only. Secure role verification happens in script.js/backend. -->
+  <script>
+    (() => {
+      const selection = document.getElementById("portal-selection");
+      const authScreen = document.getElementById("auth-screen");
+      const topPromptWrap = document.getElementById("top-prompt-wrap");
+      const backButton = document.getElementById("back-to-portals");
+      const selectedPortal = document.getElementById("selected-portal");
+      const selectedLabel = document.getElementById("selected-portal-label");
+      const introEyebrow = document.getElementById("intro-eyebrow");
+      const introTitle = document.getElementById("intro-title");
+      const introDescription = document.getElementById("intro-description");
+      const formTitle = document.getElementById("form-title");
+      const formSubtitle = document.getElementById("form-subtitle");
+
+      document.querySelectorAll("[data-portal]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const portal = button.dataset.portal;
+          sessionStorage.setItem("infinia_selected_portal", portal);
+
+          selection.hidden = true;
+          authScreen.hidden = false;
+          topPromptWrap.hidden = false;
+
+          const doctor = portal === "doctor";
+
+          selectedPortal.classList.toggle("doctor-badge", doctor);
+          selectedPortal.querySelector("[aria-hidden='true']").textContent =
+            doctor ? "✚" : "♡";
+
+          selectedLabel.textContent = doctor ? "DOCTOR ACCESS" : "PATIENT ACCESS";
+          introEyebrow.textContent = doctor ? "DOCTOR PORTAL" : "PATIENT PORTAL";
+
+          introTitle.innerHTML = doctor
+            ? "Your practice,<span>connected with care.</span>"
+            : "Your health journey,<span>all in one place.</span>";
+
+          introDescription.textContent = doctor
+            ? "Sign in to manage your schedule and patient care."
+            : "Sign in to manage appointments, health records and your wellness.";
+
+          formTitle.textContent = doctor
+            ? "Doctor sign in to InfiniaCare"
+            : "Sign in to InfiniaCare";
+
+          formSubtitle.textContent = doctor
+            ? "Use your approved doctor account to continue."
+            : "Enter your details to continue.";
+
+          document.getElementById("email").focus();
+        });
+      });
+
+      backButton.addEventListener("click", () => {
+        authScreen.hidden = true;
+        selection.hidden = false;
+        topPromptWrap.hidden = true;
+        sessionStorage.removeItem("infinia_selected_portal");
+      });
+    })();
+  </script>
 </body>
 </html>
