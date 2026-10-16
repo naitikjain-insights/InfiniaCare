@@ -1,4 +1,3 @@
-
 const SUPABASE_URL = "https://csqdkwrpieutiyajofom.supabase.co";
 const SUPABASE_ANON_KEY =
   "sb_publishable_GrNhZqa5xPrXRURbwcTF4g_u5PjSWPS";
@@ -329,8 +328,7 @@ loginForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  // Doctor registration must not grant Doctor privileges automatically.
-  // A verified Doctor onboarding process needs to be configured first.
+  // Doctor registration requires a verified onboarding process.
   if (mode === "signup" && selectedPortal === "doctor") {
     showMessage(
       "Doctor registration is not open yet. Doctor accounts must be verified and approved by the InfiniaCare administrator. You can sign in here if you already have an approved Doctor account.",
@@ -362,6 +360,8 @@ loginForm.addEventListener("submit", async (event) => {
           showMessage(
             "Your Patient account has been created successfully."
           );
+
+          window.location.replace("patient-dashboard.html");
         }
       } else {
         setMode("login");
@@ -393,14 +393,11 @@ loginForm.addEventListener("submit", async (event) => {
       const allowed = await verifyPortalAccess(data.user);
 
       if (allowed) {
-        showMessage(
+        window.location.replace(
           selectedPortal === "doctor"
-            ? "Doctor login successful. Your approved account has been verified."
-            : "Patient login successful. Welcome to InfiniaCare!"
+            ? "doctor-dashboard.html"
+            : "patient-dashboard.html"
         );
-
-        // Dashboard navigation will be added once the protected
-        // dashboard pages and their access guards are ready.
       }
     }
   } catch (error) {
@@ -500,10 +497,10 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
       const allowed = await verifyPortalAccess(session.user);
 
       if (allowed) {
-        showMessage(
+        window.location.replace(
           getSelectedPortal() === "doctor"
-            ? "Doctor login successful. Your approved account has been verified."
-            : "Patient login successful. Welcome to InfiniaCare!"
+            ? "doctor-dashboard.html"
+            : "patient-dashboard.html"
         );
       }
     })();
