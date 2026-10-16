@@ -1,5 +1,14 @@
-
 const loginForm = document.getElementById("login-form");
+
+const SUPABASE_URL = "https://csqdkwrpieutiyajofom.supabase.co";
+
+const SUPABASE_ANON_KEY = "YAHAN_APNI_COPIED_ANON_PUBLIC_KEY_PASTE_KARO";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const togglePassword = document.getElementById("toggle-password");
