@@ -1,0 +1,816 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d1c">
+  <title>Admin Console | InfiniaCare</title>
+  <meta name="description" content="InfiniaCare administrator console for reviewing doctor applications.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    :root {
+      --admin-panel: rgba(17, 25, 48, .78);
+      --admin-border: rgba(174, 192, 255, .15);
+      --admin-muted: #929db8;
+      --admin-cyan: #48e0e8;
+      --admin-violet: #9b83ff;
+    }
+
+    body { min-height: 100vh; }
+
+    .admin-shell {
+      width: min(1380px, 100%);
+      margin: auto;
+      padding: 30px clamp(18px, 4vw, 55px);
+    }
+
+    .admin-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding-bottom: 25px;
+      border-bottom: 1px solid var(--admin-border);
+    }
+
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      text-decoration: none;
+    }
+
+    .admin-brand-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(72,224,232,.35);
+      border-radius: 14px;
+      background: linear-gradient(140deg,#152c4b,#251a47);
+      color: var(--admin-cyan);
+      font-size: 32px;
+    }
+
+    .admin-brand-name {
+      font: 800 21px Manrope, sans-serif;
+      letter-spacing: -.7px;
+    }
+
+    .admin-brand-name span { color: var(--admin-cyan); }
+
+    .admin-top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .admin-identity {
+      color: var(--admin-muted);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .admin-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 15px;
+      border: 1px solid var(--admin-border);
+      border-radius: 11px;
+      color: #eef3ff;
+      background: rgba(255,255,255,.035);
+      font: 600 12px "DM Sans",sans-serif;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .admin-btn:hover { border-color: var(--admin-cyan); }
+    .admin-btn:disabled { opacity: .5; cursor: wait; }
+
+    .admin-btn.primary {
+      border: 0;
+      color: #07121e;
+      background: linear-gradient(100deg,#55e4e9,#a9a0ff);
+      font-weight: 800;
+    }
+
+    .admin-btn.danger {
+      border-color: rgba(255,117,145,.35);
+      color: #ff9eaf;
+    }
+
+    .admin-heading { padding: 42px 0 27px; }
+
+    .admin-eyebrow {
+      display: inline-block;
+      color: var(--admin-cyan);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2.4px;
+    }
+
+    .admin-heading h1 {
+      margin-top: 12px;
+      font: 800 clamp(29px,4vw,43px)/1.2 Manrope,sans-serif;
+      letter-spacing: -1.5px;
+    }
+
+    .admin-heading p {
+      margin-top: 12px;
+      color: var(--admin-muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      padding: 22px;
+      border: 1px solid var(--admin-border);
+      border-radius: 18px;
+      background: var(--admin-panel);
+      backdrop-filter: blur(20px);
+    }
+
+    .stat-label {
+      color: var(--admin-muted);
+      font-size: 12px;
+    }
+
+    .stat-value {
+      display: block;
+      margin-top: 10px;
+      font: 800 31px Manrope,sans-serif;
+    }
+
+    .stat-note {
+      display: block;
+      margin-top: 6px;
+      color: #7f8ba8;
+      font-size: 11px;
+    }
+
+    .admin-panel {
+      overflow: hidden;
+      border: 1px solid var(--admin-border);
+      border-radius: 20px;
+      background: var(--admin-panel);
+      backdrop-filter: blur(22px);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px;
+      border-bottom: 1px solid var(--admin-border);
+    }
+
+    .panel-header h2 {
+      font: 700 18px Manrope,sans-serif;
+    }
+
+    .panel-header p {
+      margin-top: 6px;
+      color: var(--admin-muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .application-list {
+      display: grid;
+      gap: 0;
+    }
+
+    .application-card {
+      padding: 24px;
+      border-bottom: 1px solid var(--admin-border);
+    }
+
+    .application-card:last-child { border-bottom: 0; }
+
+    .application-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .doctor-name {
+      font: 700 17px Manrope,sans-serif;
+      overflow-wrap: anywhere;
+    }
+
+    .doctor-email {
+      margin-top: 5px;
+      color: var(--admin-muted);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      flex-shrink: 0;
+      padding: 7px 10px;
+      border: 1px solid rgba(255,202,109,.25);
+      border-radius: 30px;
+      color: #ffcf82;
+      background: rgba(255,202,109,.07);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+    }
+
+    .status-badge.approved {
+      color: #70e6ba;
+      border-color: rgba(112,230,186,.25);
+      background: rgba(112,230,186,.07);
+    }
+
+    .status-badge.rejected {
+      color: #ff9eaf;
+      border-color: rgba(255,117,145,.25);
+      background: rgba(255,117,145,.07);
+    }
+
+    .doctor-details {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    .detail-label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--admin-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .detail-value {
+      color: #eaf0ff;
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .application-meta {
+      color: var(--admin-muted);
+      font-size: 11px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .application-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .review-note {
+      width: 100%;
+      min-height: 76px;
+      padding: 12px;
+      resize: vertical;
+      border: 1px solid var(--admin-border);
+      border-radius: 11px;
+      color: white;
+      background: rgba(5,11,27,.55);
+      font: 12px/1.6 "DM Sans",sans-serif;
+    }
+
+    .review-note:focus {
+      outline: 2px solid rgba(72,224,232,.25);
+      border-color: var(--admin-cyan);
+    }
+
+    .admin-message {
+      margin: 18px 22px 0;
+      padding: 12px 14px;
+      border: 1px solid var(--admin-border);
+      border-radius: 11px;
+      color: #c6d4ed;
+      font-size: 12px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .admin-message.error {
+      border-color: rgba(255,117,145,.3);
+      color: #ffabb9;
+    }
+
+    .admin-message.success {
+      border-color: rgba(112,230,186,.25);
+      color: #8cebc7;
+    }
+
+    .empty-state {
+      padding: 55px 22px;
+      text-align: center;
+    }
+
+    .empty-icon { font-size: 34px; }
+
+    .empty-state h3 {
+      margin-top: 15px;
+      font: 700 17px Manrope,sans-serif;
+    }
+
+    .empty-state p {
+      max-width: 390px;
+      margin: 10px auto 0;
+      color: var(--admin-muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .admin-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding-top: 24px;
+      color: #7f8ba5;
+      font-size: 11px;
+    }
+
+    [hidden] { display: none !important; }
+
+    @media (max-width: 650px) {
+      .admin-shell { padding: 20px 15px; }
+      .admin-brand-name { font-size: 18px; }
+      .admin-brand-icon { width: 38px; height: 38px; }
+      .admin-identity { display: none; }
+      .admin-heading { padding-top: 32px; }
+      .admin-stats { grid-template-columns: 1fr; gap: 10px; }
+      .stat-card { padding: 17px; }
+      .stat-value { font-size: 26px; }
+      .panel-header { padding: 17px; }
+      .application-card { padding: 18px; }
+      .doctor-details { grid-template-columns: 1fr; gap: 14px; }
+      .application-top { flex-direction: column; }
+      .admin-footer { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="admin-shell">
+    <header class="admin-topbar">
+      <a class="admin-brand" href="index.html" aria-label="InfiniaCare home">
+        <span class="admin-brand-icon" aria-hidden="true">∞</span>
+        <span class="admin-brand-name">Infinia<span>Care</span></span>
+      </a>
+
+      <div class="admin-top-actions">
+        <span class="admin-identity" id="admin-identity">Checking session…</span>
+        <button class="admin-btn" id="refresh-button" type="button">↻ Refresh</button>
+        <button class="admin-btn" id="signout-button" type="button">Sign out</button>
+      </div>
+    </header>
+
+    <section class="admin-heading">
+      <span class="admin-eyebrow">SECURE ADMINISTRATION</span>
+      <h1>Admin Console</h1>
+      <p>Review doctor applications and manage verification decisions.</p>
+    </section>
+
+    <div id="admin-message" class="admin-message" role="status" hidden></div>
+
+    <section class="admin-stats" aria-label="Application statistics">
+      <article class="stat-card">
+        <span class="stat-label">Pending review</span>
+        <strong class="stat-value" id="pending-count">—</strong>
+        <span class="stat-note">Applications awaiting a decision</span>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Approved</span>
+        <strong class="stat-value" id="approved-count">—</strong>
+        <span class="stat-note">Approved applications</span>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Rejected</span>
+        <strong class="stat-value" id="rejected-count">—</strong>
+        <span class="stat-note">Rejected applications</span>
+      </article>
+    </section>
+
+    <section class="admin-panel">
+      <header class="panel-header">
+        <div>
+          <h2>Doctor applications</h2>
+          <p>Review submitted details before making a decision.</p>
+        </div>
+      </header>
+
+      <div id="application-list" class="application-list">
+        <div class="empty-state">
+          <div class="empty-icon" aria-hidden="true">◌</div>
+          <h3>Loading applications…</h3>
+          <p>Please wait while we verify your administrator access.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="admin-footer">
+      <span>© <span id="current-year"></span> InfiniaCare</span>
+      <span>Protected administrator area</span>
+    </footer>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    "use strict";
+
+    const SUPABASE_URL =
+      "https://csqdkwrpieutiyajofom.supabase.co";
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_GrNhZqa5xPrXRURbwcTF4g_u5PjSWPS";
+
+    const $ = (id) => document.getElementById(id);
+
+    const messageBox = $("admin-message");
+    const list = $("application-list");
+    const refreshButton = $("refresh-button");
+    const signoutButton = $("signout-button");
+
+    let supabaseClient;
+    let currentUser = null;
+    let busy = false;
+
+    $("current-year").textContent = String(new Date().getFullYear());
+
+    function showMessage(message, type = "") {
+      messageBox.textContent = message;
+      messageBox.className = "admin-message" +
+        (type ? " " + type : "");
+      messageBox.hidden = false;
+    }
+
+    function clearMessage() {
+      messageBox.textContent = "";
+      messageBox.className = "admin-message";
+      messageBox.hidden = true;
+    }
+
+    function makeElement(tag, className, text) {
+      const element = document.createElement(tag);
+      if (className) element.className = className;
+      if (text !== undefined) element.textContent = text;
+      return element;
+    }
+
+    function addDetail(container, label, value) {
+      const wrapper = document.createElement("div");
+      wrapper.appendChild(makeElement("span", "detail-label", label));
+      wrapper.appendChild(
+        makeElement("span", "detail-value", value || "Not provided")
+      );
+      container.appendChild(wrapper);
+    }
+
+    function formatDate(value) {
+      if (!value) return "Date not available";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Date not available";
+      return date.toLocaleString();
+    }
+
+    function renderEmpty(title, description) {
+      list.replaceChildren();
+
+      const wrapper = makeElement("div", "empty-state");
+      wrapper.appendChild(makeElement("div", "empty-icon", "◇"));
+      wrapper.appendChild(makeElement("h3", "", title));
+      wrapper.appendChild(makeElement("p", "", description));
+      list.appendChild(wrapper);
+    }
+
+    function createApplicationCard(application) {
+      const card = makeElement("article", "application-card");
+      const top = makeElement("div", "application-top");
+      const identity = document.createElement("div");
+
+      identity.appendChild(
+        makeElement("h3", "doctor-name", application.full_name)
+      );
+      identity.appendChild(
+        makeElement("p", "doctor-email", "User ID: " + application.user_id)
+      );
+
+      const status = makeElement(
+        "span",
+        "status-badge " + application.status,
+        application.status
+      );
+
+      top.append(identity, status);
+      card.appendChild(top);
+
+      const details = makeElement("div", "doctor-details");
+      addDetail(details, "Qualification", application.qualification);
+      addDetail(
+        details,
+        "Registration number",
+        application.medical_registration_number
+      );
+      addDetail(
+        details,
+        "State Medical Council",
+        application.state_medical_council
+      );
+      addDetail(details, "Submitted", formatDate(application.submitted_at));
+      card.appendChild(details);
+
+      if (application.verification_notes) {
+        const note = makeElement(
+          "p",
+          "application-meta",
+          "Review note: " + application.verification_notes
+        );
+        card.appendChild(note);
+      }
+
+      const actions = makeElement("div", "application-actions");
+
+      if (application.status === "pending") {
+        const reviewNote = document.createElement("textarea");
+        reviewNote.className = "review-note";
+        reviewNote.maxLength = 1000;
+        reviewNote.placeholder =
+          "Optional review note (e.g. details checked or reason for rejection)";
+        reviewNote.setAttribute(
+          "aria-label",
+          "Review note for " + application.full_name
+        );
+
+        const approveButton = makeElement(
+          "button",
+          "admin-btn primary",
+          "✓ Approve doctor"
+        );
+        approveButton.type = "button";
+
+        const rejectButton = makeElement(
+          "button",
+          "admin-btn danger",
+          "✕ Reject application"
+        );
+        rejectButton.type = "button";
+
+        approveButton.addEventListener("click", () => {
+          reviewApplication(
+            application.user_id,
+            "approved",
+            reviewNote.value.trim(),
+            approveButton,
+            rejectButton
+          );
+        });
+
+        rejectButton.addEventListener("click", () => {
+          const note = reviewNote.value.trim();
+
+          if (!note) {
+            showMessage(
+              "Please add a brief reason before rejecting this application.",
+              "error"
+            );
+            reviewNote.focus();
+            return;
+          }
+
+          reviewApplication(
+            application.user_id,
+            "rejected",
+            note,
+            approveButton,
+            rejectButton
+          );
+        });
+
+        actions.append(reviewNote, approveButton, rejectButton);
+      } else {
+        actions.appendChild(
+          makeElement(
+            "p",
+            "application-meta",
+            "This application has already been reviewed."
+          )
+        );
+      }
+
+      card.appendChild(actions);
+      return card;
+    }
+
+    async function reviewApplication(
+      userId,
+      decision,
+      note,
+      approveButton,
+      rejectButton
+    ) {
+      if (busy) return;
+
+      const verb = decision === "approved" ? "approve" : "reject";
+
+      if (!window.confirm(
+        "Are you sure you want to " + verb + " this doctor application?"
+      )) return;
+
+      busy = true;
+      clearMessage();
+      approveButton.disabled = true;
+      rejectButton.disabled = true;
+
+      try {
+        const { error } = await supabaseClient.rpc(
+          "review_doctor_application",
+          {
+            target_user_id: userId,
+            decision: decision,
+            review_note: note || null
+          }
+        );
+
+        if (error) throw error;
+
+        showMessage(
+          decision === "approved"
+            ? "Doctor application approved. Doctor portal access has been enabled."
+            : "Doctor application rejected. The decision has been saved.",
+          "success"
+        );
+
+        await loadApplications();
+      } catch (error) {
+        console.error("Application review failed:", error);
+        showMessage(
+          error.message ||
+            "Could not save the decision. Check your admin role and database function.",
+          "error"
+        );
+      } finally {
+        busy = false;
+        approveButton.disabled = false;
+        rejectButton.disabled = false;
+      }
+    }
+
+    async function loadApplications() {
+      if (!currentUser) return;
+
+      refreshButton.disabled = true;
+      clearMessage();
+
+      try {
+        const { data, error } = await supabaseClient
+          .from("doctor_applications")
+          .select(
+            "user_id, full_name, medical_registration_number, state_medical_council, qualification, status, verification_notes, submitted_at"
+          )
+          .order("submitted_at", { ascending: false });
+
+        if (error) throw error;
+
+        const applications = data || [];
+
+        $("pending-count").textContent =
+          String(applications.filter(a => a.status === "pending").length);
+        $("approved-count").textContent =
+          String(applications.filter(a => a.status === "approved").length);
+        $("rejected-count").textContent =
+          String(applications.filter(a => a.status === "rejected").length);
+
+        list.replaceChildren();
+
+        if (!applications.length) {
+          renderEmpty(
+            "No doctor applications yet",
+            "When a doctor submits an application, it will appear here for review."
+          );
+          return;
+        }
+
+        applications.forEach(application => {
+          list.appendChild(createApplicationCard(application));
+        });
+      } catch (error) {
+        console.error("Could not load applications:", error);
+        renderEmpty(
+          "Could not load applications",
+          "Check the doctor_applications table, its Admin SELECT policy, and your Supabase connection. Refresh after fixing any database errors."
+        );
+        showMessage(
+          error.message || "Unable to load doctor applications.",
+          "error"
+        );
+      } finally {
+        refreshButton.disabled = false;
+      }
+    }
+
+    async function initializeAdmin() {
+      try {
+        if (!window.supabase) {
+          throw new Error("Supabase library failed to load. Refresh the page.");
+        }
+
+        supabaseClient = window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_ANON_KEY,
+          {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          }
+        );
+
+        const { data: sessionData, error: sessionError } =
+          await supabaseClient.auth.getSession();
+
+        if (sessionError) throw sessionError;
+
+        const session = sessionData.session;
+
+        if (!session) {
+          window.location.replace("index.html");
+          return;
+        }
+
+        const { data: profile, error: profileError } =
+          await supabaseClient
+            .from("profiles")
+            .select("role")
+            .eq("id", session.user.id)
+            .maybeSingle();
+
+        if (profileError) throw profileError;
+
+        if (!profile || profile.role !== "admin") {
+          await supabaseClient.auth.signOut();
+          window.location.replace("index.html");
+          return;
+        }
+
+        currentUser = session.user;
+        $("admin-identity").textContent = session.user.email || "Admin";
+        await loadApplications();
+      } catch (error) {
+        console.error("Admin initialization failed:", error);
+        renderEmpty(
+          "Admin access could not be verified",
+          "Sign in with the separate Admin account and confirm its profile role in Supabase."
+        );
+        showMessage(
+          error.message || "Unable to verify Admin access.",
+          "error"
+        );
+      }
+    }
+
+    refreshButton.addEventListener("click", loadApplications);
+
+    signoutButton.addEventListener("click", async () => {
+      signoutButton.disabled = true;
+
+      try {
+        if (supabaseClient) {
+          const { error } = await supabaseClient.auth.signOut();
+          if (error) throw error;
+        }
+
+        window.location.replace("index.html");
+      } catch (error) {
+        showMessage(error.message || "Sign out failed.", "error");
+        signoutButton.disabled = false;
+      }
+    });
+
+    initializeAdmin();
+  </script>
+</body>
+</html>
