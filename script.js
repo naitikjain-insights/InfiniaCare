@@ -3,8 +3,7 @@ const SUPABASE_URL = "https://csqdkwrpieutiyajofom.supabase.co";
 
 // Replace this placeholder with your Supabase publishable key
 // or legacy anon public key. Never use a service_role/secret key.
-const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_PUBLIC_KEY_HERE";
-
+const SUPABASE_ANON_KEY = "sb_publishable_GrNhZqa5xPrXRURbwcTF4g_u5PjSWPS";
 if (!window.supabase) {
   throw new Error("Supabase library did not load. Please refresh the page.");
 }
