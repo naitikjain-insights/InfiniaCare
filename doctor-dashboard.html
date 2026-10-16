@@ -1,0 +1,868 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta char"TF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Dashboard | InfiniaCare</title>
+  <meta name="theme-color" content="#080d1d">
+
+  <style>
+    :root {
+      --bg: #080d1d;
+      --panel: rgba(20, 29, 54, 0.82);
+      --border: rgba(148, 163, 184, 0.16);
+      --cyan: #39d5f6;
+      --violet: #9b8afb;
+      --text: #f3f6ff;
+      --muted: #9ba9c4;
+      --green: #46e0a0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse at 80% 0%, #17234a 0%, transparent 40%),
+        radial-gradient(ellipse at 10% 80%, #17133b 0%, transparent 40%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+
+    button, input, textarea { font: inherit; }
+
+    button { cursor: pointer; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 245px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      padding: 28px 18px;
+      border-right: 1px solid var(--border);
+      background: rgba(8, 13, 29, 0.88);
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 8px;
+    }
+
+    .logo {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      font-size: 24px;
+      color: white;
+      background: linear-gradient(135deg, #20c9ed, #8067f7);
+      box-shadow: 0 0 24px #39d5f62b;
+    }
+
+    .brand-name { font-size: 19px; font-weight: 800; }
+    .brand-name span { color: var(--cyan); }
+    .brand-sub { color: var(--muted); font-size: 11px; margin-top: 3px; }
+
+    .nav-label {
+      padding: 0 12px;
+      color: #71809f;
+      font-size: 10px;
+      letter-spacing: 1.8px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .nav {
+      display: grid;
+      gap: 7px;
+    }
+
+    .nav button {
+      color: var(--muted);
+      border: 1px solid transparent;
+      background: transparent;
+      text-align: left;
+      border-radius: 12px;
+      padding: 13px 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      transition: .2s;
+    }
+
+    .nav button:hover,
+    .nav button.active {
+      color: white;
+      background: linear-gradient(100deg, #24c9ee1b, #9b8afb12);
+      border-color: #39d5f632;
+    }
+
+    .nav button.active { box-shadow: inset 3px 0 var(--cyan); }
+    .nav-icon { width: 20px; text-align: center; }
+
+    .sidebar-bottom { margin-top: auto; }
+
+    .help-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      background: var(--panel);
+    }
+
+    .help-card p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .logout {
+      width: 100%;
+      border: 1px solid #ff70852e;
+      background: #ff70850c;
+      color: #ff9ba9;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+
+    main { padding: 30px; min-width: 0; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      color: var(--cyan);
+      font-size: 11px;
+      letter-spacing: 2px;
+      font-weight: 800;
+    }
+
+    h1 { font-size: clamp(24px, 3vw, 34px); margin: 9px 0; }
+    h2 { font-size: 18px; margin: 0; }
+    h3 { font-size: 15px; margin: 0; }
+
+    .muted { color: var(--muted); }
+    .small { font-size: 12px; }
+
+    .profile-pill {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 15px;
+      padding: 10px 14px;
+      max-width: 260px;
+    }
+
+    .avatar {
+      flex: 0 0 auto;
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #23c9e7, #8067f7);
+      font-weight: 800;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 23px;
+      box-shadow: 0 15px 50px #00000012;
+      backdrop-filter: blur(16px);
+      min-width: 0;
+    }
+
+    .welcome {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(115deg, #132c49, #202044 70%, #29204c);
+      margin-bottom: 22px;
+    }
+
+    .welcome::after {
+      content: "✚";
+      position: absolute;
+      right: 40px;
+      top: 8px;
+      font-size: 120px;
+      color: #39d5f610;
+      transform: rotate(-15deg);
+    }
+
+    .welcome p { color: #b8c6e1; line-height: 1.7; max-width: 560px; }
+
+    .status {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--green);
+      background: #46e0a014;
+      border: 1px solid #46e0a02b;
+      border-radius: 30px;
+      padding: 7px 11px;
+      font-size: 11px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat-label { color: var(--muted); font-size: 12px; }
+    .stat-number { font-size: 30px; font-weight: 800; margin: 16px 0 8px; }
+    .stat-icon { font-size: 23px; }
+
+    .stat-top { display: flex; align-items: center; justify-content: space-between; }
+    .cyan { color: var(--cyan); }
+    .violet { color: var(--violet); }
+    .green { color: var(--green); }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(250px, 1fr);
+      gap: 20px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #07111e;
+      font-weight: 800;
+      font-size: 12px;
+      background: linear-gradient(100deg, var(--cyan), #91eafa);
+    }
+
+    .btn-secondary {
+      background: #ffffff08;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .appointment {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .appointment:last-child { border-bottom: 0; }
+    .patient-avatar {
+      width: 43px;
+      height: 43px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: #39d5f618;
+      color: var(--cyan);
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .appointment-info { flex: 1; min-width: 0; }
+    .appointment-info p { margin: 5px 0 0; font-size: 12px; color: var(--muted); }
+    .time { font-size: 12px; color: var(--cyan); white-space: nowrap; }
+
+    .empty {
+      padding: 30px 10px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .quick-actions { display: grid; gap: 10px; }
+
+    .quick-action {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      text-align: left;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: #ffffff04;
+    }
+
+    .quick-action:hover { border-color: #39d5f650; background: #39d5f609; }
+    .quick-action span:first-child { font-size: 21px; }
+
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field { display: grid; gap: 8px; }
+    .field.full { grid-column: 1 / -1; }
+
+    label { font-size: 12px; color: var(--muted); }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: #080d1d99;
+      color: white;
+      outline: none;
+    }
+
+    input:focus, textarea:focus { border-color: var(--cyan); }
+    textarea { resize: vertical; min-height: 90px; }
+
+    .notice {
+      display: none;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #39d5f612;
+      border: 1px solid #39d5f62c;
+      color: #bdeffc;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+
+    .notice.show { display: block; }
+    .footer { color: #687794; text-align: center; padding: 28px 0 0; font-size: 11px; }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 205px minmax(0, 1fr); }
+      main { padding: 22px; }
+      .content-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 650px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { padding: 16px; border-right: 0; border-bottom: 1px solid var(--border); gap: 18px; }
+      .sidebar-bottom, .nav-label { display: none; }
+      .nav { display: flex; overflow-x: auto; padding-bottom: 4px; }
+      .nav button { flex: 0 0 auto; padding: 10px 12px; }
+      .nav-icon { display: none; }
+      main { padding: 18px 14px; }
+      .topbar { align-items: flex-start; }
+      .profile-pill { padding: 7px; }
+      .profile-pill .profile-text { display: none; }
+      .stats { grid-template-columns: 1fr; }
+      .stat-number { margin: 10px 0 5px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .panel { padding: 17px; }
+      .welcome::after { right: 5px; font-size: 70px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">∞</div>
+        <div>
+          <div class="brand-name">Infinia<span>Care</span></div>
+          <div class="brand-sub">HEALTHCARE PLATFORM</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="nav-label">DOCTOR PORTAL</div>
+        <nav class="nav" aria-label="Doctor navigation">
+          <button class="active" data-page="overview"><span class="nav-icon">▦</span> Overview</button>
+          <button data-page="appointments"><span class="nav-icon">▣</span> Appointments</button>
+          <button data-page="patients"><span class="nav-icon">♙</span> Patients</button>
+          <button data-page="records"><span class="nav-icon">▤</span> Patient Records</button>
+          <button data-page="profile"><span class="nav-icon">⚙</span> My Profile</button>
+        </nav>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="help-card">
+          <h3>Care with confidence</h3>
+          <p>Your workspace for managing patient care and daily appointments.</p>
+        </div>
+        <button class="logout" id="logout-button">↪ &nbsp; Sign out</button>
+      </div>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <div>
+          <div class="eyebrow">DOCTOR WORKSPACE</div>
+          <h1 id="page-title">Overview</h1>
+          <div class="muted small" id="today-date"></div>
+        </div>
+        <div class="profile-pill">
+          <div class="avatar" id="top-avatar">D</div>
+          <div class="profile-text">
+            <strong id="top-name">Doctor</strong>
+            <div class="muted small">Verified Doctor Portal</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice" id="notice" role="status"></div>
+
+      <section class="page-section active" id="page-overview">
+        <div class="panel welcome">
+          <div class="status"><span class="status-dot"></span> Doctor portal active</div>
+          <h1>Welcome back, <span id="welcome-name" class="cyan">Doctor</span> 👋</h1>
+          <p>Manage your appointments, review patient information, and keep your healthcare workflow organized in one place.</p>
+        </div>
+
+        <div class="stats">
+          <div class="panel">
+            <div class="stat-top"><span class="stat-label">Today's appointments</span><span class="stat-icon cyan">▣</span></div>
+            <div class="stat-number" id="today-count">—</div>
+            <div class="muted small">Scheduled for today</div>
+          </div>
+          <div class="panel">
+            <div class="stat-top"><span class="stat-label">Total appointments</span><span class="stat-icon violet">◷</span></div>
+            <div class="stat-number" id="total-count">—</div>
+            <div class="muted small">Records available to your account</div>
+          </div>
+          <div class="panel">
+            <div class="stat-top"><span class="stat-label">Unique patients</span><span class="stat-icon green">♙</span></div>
+            <div class="stat-number" id="patient-count">—</div>
+            <div class="muted small">Based on available appointments</div>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <div class="panel">
+            <div class="section-head">
+              <h2>Upcoming appointments</h2>
+              <button class="btn btn-secondary" data-goto="appointments">View all</button>
+            </div>
+            <div id="overview-appointments">
+              <div class="empty">Loading appointments…</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="section-head"><h2>Quick actions</h2></div>
+            <div class="quick-actions">
+              <button class="quick-action" data-goto="appointments"><span>📅</span><span><strong>Appointments</strong><div class="muted small">Review your schedule</div></span></button>
+              <button class="quick-action" data-goto="patients"><span>👥</span><span><strong>Patient directory</strong><div class="muted small">View available patient entries</div></span></button>
+              <button class="quick-action" data-goto="profile"><span>👤</span><span><strong>Update profile</strong><div class="muted small">Manage your details</div></span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-section" id="page-appointments">
+        <div class="panel">
+          <div class="section-head"><h2>Appointments</h2><button class="btn btn-secondary" id="refresh-appointments">↻ Refresh</button></div>
+          <div class="muted small" style="margin-bottom:16px">Appointments are loaded from the connected Supabase database.</div>
+          <div id="all-appointments"><div class="empty">Loading appointments…</div></div>
+        </div>
+      </section>
+
+      <section class="page-section" id="page-patients">
+        <div class="panel">
+          <div class="section-head"><h2>Patient directory</h2></div>
+          <p class="muted small">This directory uses patients linked to appointments visible to your account.</p>
+          <div id="patient-directory"><div class="empty">Loading patient list…</div></div>
+        </div>
+      </section>
+
+      <section class="page-section" id="page-records">
+        <div class="panel">
+          <div class="section-head"><h2>Patient Records</h2></div>
+          <p class="muted">Patient medical records are not connected yet.</p>
+          <div class="empty">Once a secure patient-records table and access policies are configured, authorized records can appear here.</div>
+        </div>
+      </section>
+
+      <section class="page-section" id="page-profile">
+        <div class="panel">
+          <div class="section-head"><h2>My Profile</h2></div>
+          <p class="muted small">Your login email comes from Supabase Authentication. The name below is read from your profile.</p>
+          <div id="profile-message" class="notice" role="status"></div>
+          <form id="profile-form">
+            <div class="form-grid">
+              <div class="field">
+                <label for="doctor-name">Full name</label>
+                <input id="doctor-name" maxlength="100" placeholder="Dr. Your Name" autocomplete="name">
+              </div>
+              <div class="field">
+                <label for="doctor-email">Email address</label>
+                <input id="doctor-email" type="email" disabled>
+              </div>
+              <div class="field full">
+                <label for="doctor-specialty">Specialization (display only)</label>
+                <input id="doctor-specialty" maxlength="100" placeholder="e.g. General Medicine">
+              </div>
+            </div>
+            <p class="muted small">Profile editing requires a matching, secure database policy. If saving is not enabled in your current setup, your changes will not be stored.</p>
+            <button class="btn" type="submit">Save profile</button>
+          </form>
+        </div>
+      </section>
+
+      <div class="footer">© <span id="year"></span> InfiniaCare · Healthcare, with care.</div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://csqdkwrpieutiyajofom.supabase.co";
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_GrNhZqa5xPrXRURbwcTF4g_u5PjSWPS";
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      }
+    );
+
+    const $ = (id) => document.getElementById(id);
+    let currentUser = null;
+    let appointments = [];
+
+    const escapeHTML = (value) =>
+      String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+
+    function showNotice(message, target = "notice") {
+      const element = $(target);
+      if (!element) return;
+      element.textContent = message;
+      element.classList.add("show");
+    }
+
+    function hideNotice(target = "notice") {
+      const element = $(target);
+      if (!element) return;
+      element.textContent = "";
+      element.classList.remove("show");
+    }
+
+    function goToPage(page) {
+      document.querySelectorAll(".page-section").forEach(section => {
+        section.classList.toggle("active", section.id === "page-" + page);
+      });
+
+      document.querySelectorAll("[data-page]").forEach(button => {
+        button.classList.toggle("active", button.dataset.page === page);
+      });
+
+      const titles = {
+        overview: "Overview",
+        appointments: "Appointments",
+        patients: "Patients",
+        records: "Patient Records",
+        profile: "My Profile"
+      };
+
+      $("page-title").textContent = titles[page] || "Dashboard";
+    }
+
+    document.querySelectorAll("[data-page]").forEach(button => {
+      button.addEventListener("click", () => goToPage(button.dataset.page));
+    });
+
+    document.querySelectorAll("[data-goto]").forEach(button => {
+      button.addEventListener("click", () => goToPage(button.dataset.goto));
+    });
+
+    function getAppointmentDate(item) {
+      const value = item.appointment_date || item.scheduled_at || item.date;
+      if (!value) return null;
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    function renderAppointments(items, targetId) {
+      const target = $(targetId);
+      if (!items.length) {
+        target.innerHTML = '<div class="empty">No appointments found yet.<br>Appointments will appear here when your database has records.</div>';
+        return;
+      }
+
+      target.innerHTML = items.map(item => {
+        const patient = item.patient_name || item.full_name || "Patient";
+        const date = getAppointmentDate(item);
+        const dateText = date
+          ? date.toLocaleString([], {
+              dateStyle: "medium",
+              timeStyle: "short"
+            })
+          : "Date not specified";
+        const status = item.status || "Scheduled";
+
+        return `
+          <div class="appointment">
+            <div class="patient-avatar">${escapeHTML(patient.trim().charAt(0).toUpperCase() || "P")}</div>
+            <div class="appointment-info">
+              <h3>${escapeHTML(patient)}</h3>
+              <p>${escapeHTML(item.reason || item.notes || "General consultation")} · ${escapeHTML(status)}</p>
+            </div>
+            <div class="time">${escapeHTML(dateText)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderPatients(items) {
+      const unique = new Map();
+
+      items.forEach(item => {
+        const id = item.patient_id || item.patient_email || item.patient_name || item.full_name;
+        if (id) unique.set(String(id), item);
+      });
+
+      const list = [...unique.values()];
+      $("patient-count").textContent = list.length;
+
+      if (!list.length) {
+        $("patient-directory").innerHTML =
+          '<div class="empty">No linked patient entries found.<br>Patient records will appear when appointments are available.</div>';
+        return;
+      }
+
+      $("patient-directory").innerHTML = list.map(item => {
+        const name = item.patient_name || item.full_name || "Patient";
+        return `
+          <div class="appointment">
+            <div class="patient-avatar">${escapeHTML(name.charAt(0).toUpperCase())}</div>
+            <div class="appointment-info">
+              <h3>${escapeHTML(name)}</h3>
+              <p>${escapeHTML(item.reason || "Appointment record")}</p>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function loadAppointments() {
+      $("overview-appointments").innerHTML =
+        '<div class="empty">Loading appointments…</div>';
+      $("all-appointments").innerHTML =
+        '<div class="empty">Loading appointments…</div>';
+
+      /*
+       * This page assumes an appointments table with a doctor_id column.
+       * If your schema uses another column/table, adjust this query.
+       * Supabase Row Level Security must restrict access to the signed-in doctor.
+       */
+      const { data, error } = await supabaseClient
+        .from("appointments")
+        .select("*")
+        .eq("doctor_id", currentUser.id)
+        .order("appointment_date", { ascending: true });
+
+      if (error) {
+        appointments = [];
+        $("today-count").textContent = "—";
+        $("total-count").textContent = "—";
+
+        renderAppointments([], "overview-appointments");
+        renderAppointments([], "all-appointments");
+        $("patient-directory").innerHTML =
+          '<div class="empty">Appointments could not be loaded. Confirm that the appointments table, doctor_id column, and Row Level Security policies are configured.</div>';
+
+        showNotice(
+          "Appointment data is not connected yet. Dashboard and authentication are available; database appointments need matching schema and policies."
+        );
+        return;
+      }
+
+      appointments = data || [];
+
+      const today = new Date();
+      const todayCount = appointments.filter(item => {
+        const date = getAppointmentDate(item);
+        return date && date.toDateString() === today.toDateString();
+      }).length;
+
+      $("today-count").textContent = todayCount;
+      $("total-count").textContent = appointments.length;
+
+      renderAppointments(
+        appointments.filter(item => {
+          const date = getAppointmentDate(item);
+          return !date || date >= new Date(new Date().setHours(0, 0, 0, 0));
+        }).slice(0, 5),
+        "overview-appointments"
+      );
+
+      renderAppointments(appointments, "all-appointments");
+      renderPatients(appointments);
+    }
+
+    async function loadProfile() {
+      $("doctor-email").value = currentUser.email || "";
+
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("full_name, role, doctor_approved")
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+      if (error || !data) {
+        showNotice("Could not load your profile. Please refresh and try again.");
+        return;
+      }
+
+      if (data.role !== "doctor" || data.doctor_approved !== true) {
+        await supabaseClient.auth.signOut();
+        window.location.replace("index.html");
+        return;
+      }
+
+      const name = data.full_name || "Doctor";
+      $("top-name").textContent = name;
+      $("welcome-name").textContent = name;
+      $("top-avatar").textContent = name.trim().charAt(0).toUpperCase();
+      $("doctor-name").value = data.full_name || "";
+    }
+
+    $("profile-form").addEventListener("submit", async event => {
+      event.preventDefault();
+      hideNotice("profile-message");
+
+      const fullName = $("doctor-name").value.trim();
+
+      if (!fullName) {
+        showNotice("Please enter your full name.", "profile-message");
+        return;
+      }
+
+      /*
+       * Profile updates may be blocked by your current RLS policies.
+       * This update changes only full_name; it never changes the user's role.
+       */
+      const { error } = await supabaseClient
+        .from("profiles")
+        .update({ full_name: fullName })
+        .eq("id", currentUser.id)
+        .eq("role", "doctor");
+
+      if (error) {
+        showNotice(
+          "Profile could not be saved. Your current Supabase security policy may disable profile edits.",
+          "profile-message"
+        );
+        return;
+      }
+
+      $("top-name").textContent = fullName;
+      $("welcome-name").textContent = fullName;
+      $("top-avatar").textContent = fullName.charAt(0).toUpperCase();
+
+      showNotice("Profile updated successfully.", "profile-message");
+    });
+
+    $("refresh-appointments").addEventListener("click", loadAppointments);
+
+    $("logout-button").addEventListener("click", async () => {
+      $("logout-button").disabled = true;
+      const { error } = await supabaseClient.auth.signOut();
+
+      if (error) {
+        $("logout-button").disabled = false;
+        showNotice("Could not sign out. Please try again.");
+        return;
+      }
+
+      sessionStorage.removeItem("infinia_selected_portal");
+      sessionStorage.removeItem("infinia_oauth_pending");
+      window.location.replace("index.html");
+    });
+
+    async function initDashboard() {
+      $("year").textContent = new Date().getFullYear();
+      $("today-date").textContent = new Date().toLocaleDateString([], {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      });
+
+      const { data: { session }, error } =
+        await supabaseClient.auth.getSession();
+
+      if (error || !session) {
+        window.location.replace("index.html");
+        return;
+      }
+
+      currentUser = session.user;
+      await loadProfile();
+
+      if (window.location.pathname.endsWith("doctor-dashboard.html")) {
+        const { data: profile } = await supabaseClient
+          .from("profiles")
+          .select("role, doctor_approved")
+          .eq("id", currentUser.id)
+          .maybeSingle();
+
+        if (!profile ||
+            profile.role !== "doctor" ||
+            profile.doctor_approved !== true) {
+          await supabaseClient.auth.signOut();
+          window.location.replace("index.html");
+          return;
+        }
+      }
+
+      await loadAppointments();
+    }
+
+    initDashboard();
+  </script>
+</body>
+</html>
