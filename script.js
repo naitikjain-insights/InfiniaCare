@@ -1,17 +1,7 @@
 
 const SUPABASE_URL = "https://csqdkwrpieutiyajofom.supabase.co";
-
-// Replace this placeholder with your Supabase publishable key
-// or legacy anon public key. Never use a service_role/secret key.
-const SUPABASE_ANON_KEY = "sb_publishable_GrNhZqa5xPrXRURbwcTF4g_u5PjSWPS";
-if (!window.supabase) {
-  throw new Error("Supabase library did not load. Please refresh the page.");
-}
-
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+const SUPABASE_ANON_KEY =
+  "sb_publishable_GrNhZqa5xPrXRURbwcTF4g_u5PjSWPS";
 
 const loginForm = document.getElementById("login-form");
 const emailInput = document.getElementById("email");
@@ -22,44 +12,48 @@ const googleButton = document.getElementById("google-login");
 const forgotLink = document.getElementById("forgot-link");
 const rememberMe = document.getElementById("remember-me");
 
+if (!window.supabase) {
+  throw new Error("Supabase library failed to load. Please refresh the page.");
+}
+
 function showMessage(message, isError = false) {
   formMessage.textContent = message;
   formMessage.hidden = false;
   formMessage.setAttribute("role", isError ? "alert" : "status");
 }
 
-function setLoading(isLoading) {
-  const submitButton = loginForm.querySelector('button[type="submit"]');
-
-  submitButton.disabled = isLoading;
-  submitButton.querySelector("span").textContent = isLoading
-    ? "Please wait..."
-    : "Sign in";
-}
-
 function getEmail() {
   return emailInput.value.trim().toLowerCase();
 }
 
-// Remember me: persist the session in local storage when checked.
-// Otherwise, keep the session in session storage for this browser tab.
-const originalFetch = window.fetch.bind(window);
-
+// Remember Me storage: use localStorage when checked,
+// otherwise use sessionStorage.
 const authStorage = {
   getItem(key) {
     try {
-      return (rememberMe?.checked ? localStorage : sessionStorage).getItem(key);
+      return (
+        localStorage.getItem(key) ??
+        sessionStorage.getItem(key)
+      );
     } catch {
       return null;
     }
   },
+
   setItem(key, value) {
     try {
-      (rememberMe?.checked ? localStorage : sessionStorage).setItem(key, value);
+      if (rememberMe?.checked) {
+        localStorage.setItem(key, value);
+        sessionStorage.removeItem(key);
+      } else {
+        sessionStorage.setItem(key, value);
+        localStorage.removeItem(key);
+      }
     } catch {
-      // Storage may be unavailable in private browsing.
+      // Browser storage may be unavailable.
     }
   },
+
   removeItem(key) {
     try {
       localStorage.removeItem(key);
@@ -70,8 +64,7 @@ const authStorage = {
   }
 };
 
-// Recreate the client with the selected storage behaviour.
-const authClient = window.supabase.createClient(
+const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY,
   {
@@ -80,13 +73,18 @@ const authClient = window.supabase.createClient(
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true
-    },
-    global: {
-      fetch: originalFetch
     }
   }
 );
 
+function setLoading(isLoading) {
+  const button = loginForm.querySelector('button[type="submit"]');
+  button.disabled = isLoading;
+  button.querySelector("span").textContent =
+    isLoading ? "Please wait..." : "Sign in";
+}
+
+// Show or hide password.
 togglePassword.addEventListener("click", () => {
   const show = passwordInput.type === "password";
 
@@ -99,6 +97,7 @@ togglePassword.addEventListener("click", () => {
   );
 });
 
+// Real email and password login.
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -107,18 +106,10 @@ loginForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  if (
-    !SUPABASE_ANON_KEY ||
-    SUPABASE_ANON_KEY === "PASTE_YOUR_SUPABASE_PUBLIC_KEY_HERE"
-  ) {
-    showMessage("Please add your Supabase public key in script.js first.", true);
-    return;
-  }
-
   setLoading(true);
 
   try {
-    const { data, error } = await authClient.auth.signInWithPassword({
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
       email: getEmail(),
       password: passwordInput.value
     });
@@ -126,27 +117,48 @@ loginForm.addEventListener("submit", async (event) => {
     if (error) throw error;
 
     showMessage("Login successful! Welcome to InfiniaCare.");
-
-    // Later we can redirect to the authenticated dashboard.
-    console.log("Signed-in user:", data.user?.id);
+    console.log("Signed-in user ID:", data.user?.id);
   } catch (error) {
-    showMessage(error.message || "Login failed. Please try again.", true);
+    showMessage(
+      error.message || "Login failed. Please check your details and try again.",
+      true
+    );
   } finally {
     setLoading(false);
   }
 });
 
+// Password reset email.
+forgotLink.addEventListener("click", async (event) => {
+  event.preventDefault();
+
+  const email = getEmail();
+
+  if (!email) {
+    showMessage("Enter your email address first, then click Forgot password.");
+    emailInput.focus();
+    return;
+  }
+
+  try {
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + window.location.pathname
+    });
+
+    if (error) throw error;
+
+    showMessage(
+      "If an account exists for this email, a password reset email will be sent."
+    );
+  } catch (error) {
+    showMessage(error.message || "Could not send the reset email.", true);
+  }
+});
+
+// Google OAuth. Google must first be configured in Supabase.
 googleButton.addEventListener("click", async () => {
   try {
-    if (
-      !SUPABASE_ANON_KEY ||
-      SUPABASE_ANON_KEY === "PASTE_YOUR_SUPABASE_PUBLIC_KEY_HERE"
-    ) {
-      showMessage("Please add your Supabase public key first.", true);
-      return;
-    }
-
-    const { error } = await authClient.auth.signInWithOAuth({
+    const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: window.location.origin + window.location.pathname
@@ -156,45 +168,22 @@ googleButton.addEventListener("click", async () => {
     if (error) throw error;
   } catch (error) {
     showMessage(
-      error.message || "Google sign-in could not be started.",
+      error.message ||
+        "Google sign-in is not configured yet. Please try again later.",
       true
     );
   }
 });
 
-forgotLink.addEventListener("click", async (event) => {
-  event.preventDefault();
-
-  const email = getEmail();
-
-  if (!email) {
-    showMessage("Enter your email address first, then click Forgot password.", true);
-    emailInput.focus();
-    return;
-  }
-
-  try {
-    const { error } = await authClient.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + window.location.pathname
-    });
-
-    if (error) throw error;
-
-    showMessage("If an account exists for this email, a password reset email will be sent.");
-  } catch (error) {
-    showMessage(error.message || "Could not send the password reset email.", true);
-  }
-});
-
+// Signup UI will be added in a later step.
 document.querySelectorAll('a[href="#signup"]').forEach((link) => {
   link.addEventListener("click", (event) => {
     event.preventDefault();
-    showMessage(
-      "Signup form is not available yet. We'll add the registration screen next."
-    );
+    showMessage("The signup form will be added in the next step.");
   });
 });
 
+// Current year, if the element exists.
 document.getElementById("current-year")?.replaceChildren(
   document.createTextNode(String(new Date().getFullYear()))
 );
