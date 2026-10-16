@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d1c">
+  <title>Login | InfiniaCare</title>
+  <meta name="description" content="Your healthcare and wellness journey starts with InfiniaCare.">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="login-page">
+
+    <header class="topbar">
+      <a href="index.html" class="brand">
+        <span class="brand-icon">∞<span>♥</span></span>
+        <span class="brand-name">Infinia<span>Care</span></span>
+      </a>
+
+      <p class="topbar-text">
+        New here?
+        <a href="#signup">Create account</a>
+      </p>
+    </header>
+
+    <section class="login-layout">
+
+      <div class="welcome-panel">
+        <div class="eyebrow">
+          <span class="status-dot"></span>
+          YOUR WELLNESS, CONNECTED
+        </div>
+
+        <h1>Your health journey,
+          <span>all in one place.</span>
+        </h1>
+
+        <p class="welcome-description">
+          Welcome to a healthier you. Sign in to access your
+          personalized healthcare and wellness experience.
+        </p>
+
+        <div class="wellness-visual" aria-hidden="true">
+          <div class="orbit orbit-one"></div>
+          <div class="orbit orbit-two"></div>
+          <div class="visual-glow"></div>
+          <div class="visual-symbol">∞<span>♥</span></div>
+          <div class="visual-caption">CARE WITHOUT LIMITS</div>
+        </div>
+
+        <p class="privacy-note">
+          <span>✦</span> Your wellbeing matters.
+        </p>
+      </div>
+
+      <div class="form-panel">
+        <div class="form-heading">
+          <p class="form-kicker">WELCOME BACK</p>
+          <h2>Sign in to InfiniaCare</h2>
+          <p>Enter your details to continue.</p>
+        </div>
+
+        <div id="form-message" class="form-message"
+             role="status" aria-live="polite" hidden></div>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" id="email" name="email"
+              placeholder="you@example.com"
+              autocomplete="email" required>
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="password">Password</label>
+              <a href="#forgot-password" id="forgot-link">
+                Forgot password?
+              </a>
+            </div>
+
+            <div class="password-field">
+              <input type="password" id="password" name="password"
+                placeholder="Enter your password"
+                autocomplete="current-password" required>
+              <button type="button" id="toggle-password"
+                class="password-toggle" aria-pressed="false">
+                Show
+              </button>
+            </div>
+          </div>
+
+          <label class="remember-option">
+            <input type="checkbox" id="remember-me">
+            <span>Remember me</span>
+          </label>
+
+          <button type="submit" class="login-button">
+            <span>Sign in</span>
+            <span>→</span>
+          </button>
+        </form>
+
+        <div class="separator">
+          <span></span>
+          <p>OR CONTINUE WITH</p>
+          <span></span>
+        </div>
+
+        <button type="button" class="google-button" id="google-login">
+          <span class="google-g">G</span>
+          Continue with Google
+        </button>
+
+        <p class="signup-text" id="signup">
+          Don't have an account?
+          <a href="#signup">Sign up</a>
+        </p>
+
+        <p class="form-footer">
+          By continuing, you agree to our
+          <a href="#terms">Terms</a> and
+          <a href="#privacy">Privacy Policy</a>.
+        </p>
+      </div>
+
+    </section>
+
+    <footer class="page-footer">
+      <span>© 2026 InfiniaCare</span>
+      <span>Made for your wellbeing ♥</span>
+    </footer>
+
+  </main>
+</body>
+</html>
